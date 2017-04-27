@@ -12,14 +12,14 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultTextureBinder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 
+// https://xoppa.github.io/blog/using-materials-with-libgdx/
 
-public class Basic3D implements ApplicationListener {
+public class Basic3D implements ApplicationListener  {
         public PerspectiveCamera cam;
         public ModelBatch modelBatch;
         public Model model;
@@ -64,9 +64,7 @@ public class Basic3D implements ApplicationListener {
 
             renderContext = new RenderContext(new DefaultTextureBinder(DefaultTextureBinder.WEIGHTED, 1));
 
-            String vert = Gdx.files.internal("test.vertex.glsl").readString();
-            String frag = Gdx.files.internal("test.fragment.glsl").readString();
-            shader = new DefaultShader(renderable, new DefaultShader.Config(vert, frag));
+            shader = new TestShader();
             shader.init();
 
             //instance = new ModelInstance(model);
