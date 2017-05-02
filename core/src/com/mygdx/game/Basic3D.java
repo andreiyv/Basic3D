@@ -45,8 +45,12 @@ public class Basic3D implements ApplicationListener {
         ModelBuilder modelBuilder = new ModelBuilder();
 
         modelBuilder.begin();
+
+// MeshBuilder
         MeshPartBuilder tileBuilder;
+
         tileBuilder = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
+
         tileBuilder.rect(-0.45f, 0.1f, 0.45f,   0.45f, 0.1f, 0.45f,    0.45f, 0.1f, -0.45f,  -0.45f, 0.1f, -0.45f,  0f, 1f, 0f);
         tileBuilder = modelBuilder.part("others", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.GREEN)));
         tileBuilder.rect(-0.45f, 0f, -0.45f,    0.45f, 0f, -0.45f,     0.45f, 0f, 0.45f,     -0.45f, 0f,  0.45f,    0f, -1f, 0f);
