@@ -26,6 +26,11 @@ public class Basic3D implements ApplicationListener {
     @Override
     public void create() {
         modelBatch = new ModelBatch();
+/*
+
+   Up Z, Right Y, X thru the glass
+ */
+
 
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(1f, 1f, 1f);
