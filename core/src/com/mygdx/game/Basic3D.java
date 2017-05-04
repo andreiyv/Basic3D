@@ -20,7 +20,7 @@ public class Basic3D implements ApplicationListener {
     public PerspectiveCamera cam;
     public ModelBatch modelBatch;
     public Model model;
-    public ModelInstance instance;
+    public ModelInstance instance, instance1;
     public CameraInputController camController;
 
     @Override
@@ -70,7 +70,6 @@ public class Basic3D implements ApplicationListener {
         model = modelBuilder.end();
 
         instance = new ModelInstance(model);
-
 
     }
 
