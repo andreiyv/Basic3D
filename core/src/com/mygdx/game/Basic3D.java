@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
@@ -51,14 +52,15 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     public PerspectiveCamera cam;
     public ModelBatch modelBatch;
     public Model model;
-    public ModelInstance instance, instance1;
+    public ModelInstance simple_instance;
     public CameraInputController camController;
     protected Stage stage;
     protected Label label;
     protected BitmapFont font;
     protected StringBuilder stringBuilder;
     public Environment environment;
-
+    private int visibleCount;
+    private int selected = 1;
     protected Array<GameObject> instances = new Array<GameObject>();
 
     @Override
@@ -94,7 +96,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         ModelBuilder modelBuilder = new ModelBuilder();
 
         modelBuilder.begin();
-
+        Node node1 = modelBuilder.node();
+        node1.id = "1";
 // MeshBuilder
         MeshPartBuilder tileBuilder;
 
@@ -118,8 +121,10 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         model = modelBuilder.end();
 
-        instance = new ModelInstance(model);
+        simple_instance = new ModelInstance(model);
 
+        GameObject instance = new GameObject(model, model.nodes.get(0).id, true);
+        instances.add(instance);
     }
 
     @Override
@@ -128,11 +133,16 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         camController.update();
-
         modelBatch.begin(cam);
-        modelBatch.render(instance, environment);
+        for (final GameObject instance : instances) {
+            //      if (isVisible(cam, instance)) {
+            modelBatch.render(instance, environment);
+           // modelBatch.render(simple_instance, environment);
+            //        visibleCount++;
+     //   }
+            visibleCount = 1;
+    }
         modelBatch.end();
-
         stringBuilder.setLength(0);
         stringBuilder.append(" FPS: ").append(Gdx.graphics.getFramesPerSecond());
         stringBuilder.append(" Visible: ").append(visibleCount);
