@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -17,11 +18,36 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Array;
 
 
-public class Basic3D implements ApplicationListener {
+public class Basic3D extends InputAdapter implements ApplicationListener {
+
+// Тип для массива инстансов моделей
+    public static class GameObject extends ModelInstance {
+        public final Vector3 center = new Vector3();
+        public final Vector3 dimensions = new Vector3();
+        public final float radius;
+
+        private final static BoundingBox bounds = new BoundingBox();
+
+        public GameObject (Model model, String rootNode, boolean mergeTransform) {
+            super(model, rootNode, mergeTransform);
+            calculateBoundingBox(bounds);
+            bounds.getCenter(center);
+            bounds.getDimensions(dimensions);
+            radius = dimensions.len() / 2f;
+        }
+    }
+
+
+
+
+
     public PerspectiveCamera cam;
     public ModelBatch modelBatch;
     public Model model;
@@ -32,6 +58,8 @@ public class Basic3D implements ApplicationListener {
     protected BitmapFont font;
     protected StringBuilder stringBuilder;
     public Environment environment;
+
+    protected Array<GameObject> instances = new Array<GameObject>();
 
     @Override
     public void create() {
