@@ -52,7 +52,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     public PerspectiveCamera cam;
     public ModelBatch modelBatch;
     public Model model;
-    public ModelInstance simple_instance;
     public CameraInputController camController;
     protected Stage stage;
     protected Label label;
@@ -96,35 +95,43 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         ModelBuilder modelBuilder = new ModelBuilder();
 
         modelBuilder.begin();
-        Node node1 = modelBuilder.node();
-        node1.id = "1";
-// MeshBuilder
-        MeshPartBuilder tileBuilder;
+            Node node1 = modelBuilder.node();
+            node1.id = "n1";
 
-        tileBuilder = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
-        tileBuilder.rect(-1f, 2f, 1f,   1f, 2f, 1f,    1f, 2f, -1f,  -1f, 2f, -1f,  0f, 1f, 0f);
+                MeshPartBuilder tileBuilder;
 
-        tileBuilder = modelBuilder.part("side1", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.GREEN)));
-        tileBuilder.rect(-1f, 0f, -1f,    1f, 0f, -1f,     1f, 0f, 1f,     -1f, 0f,  1f,    0f, -1f, 0f);
+                    tileBuilder = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
+                    tileBuilder.rect(-1f, 2f, 1f,   1f, 2f, 1f,    1f, 2f, -1f,  -1f, 2f, -1f,  0f, 1f, 0f);
 
-        tileBuilder = modelBuilder.part("side2", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
-        tileBuilder.rect(-1f, 2f, 1f,  -1f, 0f, 1f,      1f, 0f, 1f,      1f, 2f,  1f,    0f, 0f, 1f);
+                    tileBuilder = modelBuilder.part("side1", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.GREEN)));
+                    tileBuilder.rect(-1f, 0f, -1f,    1f, 0f, -1f,     1f, 0f, 1f,     -1f, 0f,  1f,    0f, -1f, 0f);
 
-        tileBuilder = modelBuilder.part("side3", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.WHITE)));
-        tileBuilder.rect(-1f, 2f, 1f,  -1f, 2f, -1f,  -1f, 0f, -1f,    -1f, 0f,  1f,    -1f, 0f, 0f);
+                    tileBuilder = modelBuilder.part("side2", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
+                    tileBuilder.rect(-1f, 2f, 1f,  -1f, 0f, 1f,      1f, 0f, 1f,      1f, 2f,  1f,    0f, 0f, 1f);
 
-        tileBuilder = modelBuilder.part("site4", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.YELLOW)));
-        tileBuilder.rect( 1f, 2f, 1f,   1f, 0f, 1f,      1f, 0f, -1f,     1f, 2f,  -1f,    0f, 0f, 1f);
+                    tileBuilder = modelBuilder.part("side3", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.WHITE)));
+                    tileBuilder.rect(-1f, 2f, 1f,  -1f, 2f, -1f,  -1f, 0f, -1f,    -1f, 0f,  1f,    -1f, 0f, 0f);
 
-        tileBuilder = modelBuilder.part("site5", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.MAGENTA)));
-        tileBuilder.rect(-1f, 2f, -1f,  1f, 2f, -1f,   1f, 0f, -1f,    -1f, 0f,  -1f,    0f, 0f, 1f);
+                    tileBuilder = modelBuilder.part("site4", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.YELLOW)));
+                    tileBuilder.rect( 1f, 2f, 1f,   1f, 0f, 1f,      1f, 0f, -1f,     1f, 2f,  -1f,    0f, 0f, 1f);
+
+                    tileBuilder = modelBuilder.part("site5", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.MAGENTA)));
+                    tileBuilder.rect(-1f, 2f, -1f,  1f, 2f, -1f,   1f, 0f, -1f,    -1f, 0f,  -1f,    0f, 0f, 1f);
+
+        Node node2 = modelBuilder.node();
+        node2.id = "n2";
+
+            MeshPartBuilder tileBuilder1;
+
+                tileBuilder1 = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
+                tileBuilder1.rect(2f, 2f, 1f,   4f, 2f, 1f,    4f, 2f, -1f,  2f, 2f, -1f,  0f, 1f, 0f);
 
         model = modelBuilder.end();
 
-        simple_instance = new ModelInstance(model);
-
         GameObject instance = new GameObject(model, model.nodes.get(0).id, true);
         instances.add(instance);
+        instances.add(new GameObject(model, model.nodes.get(1).id, true));
+
     }
 
     @Override
