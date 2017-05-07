@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
@@ -28,7 +30,7 @@ import com.badlogic.gdx.utils.Array;
 
 public class Basic3D extends InputAdapter implements ApplicationListener {
 
-// Тип для массива инстансов моделей
+    // Тип для массива инстансов моделей
     public static class GameObject extends ModelInstance {
         public final Vector3 center = new Vector3();
         public final Vector3 dimensions = new Vector3();
@@ -36,7 +38,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         private final static BoundingBox bounds = new BoundingBox();
 
-        public GameObject (Model model, String rootNode, boolean mergeTransform) {
+        public GameObject(Model model, String rootNode, boolean mergeTransform) {
             super(model, rootNode, mergeTransform);
             calculateBoundingBox(bounds);
             bounds.getCenter(center);
@@ -44,9 +46,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             radius = dimensions.len() / 2f;
         }
     }
-
-
-
 
 
     public PerspectiveCamera cam;
@@ -59,8 +58,12 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     protected StringBuilder stringBuilder;
     public Environment environment;
     private int visibleCount;
-    private int selected = 1;
+    private int selected = -1, selecting = -1;;
     protected Array<GameObject> instances = new Array<GameObject>();
+    private Vector3 position = new Vector3();
+
+    private Material selectionMaterial;
+    private Material originalMaterial;
 
     @Override
     public void create() {
@@ -95,42 +98,46 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         ModelBuilder modelBuilder = new ModelBuilder();
 
         modelBuilder.begin();
-            Node node1 = modelBuilder.node();
-            node1.id = "n1";
+        Node node1 = modelBuilder.node();
+        node1.id = "n1";
 
-                MeshPartBuilder tileBuilder;
+        MeshPartBuilder tileBuilder;
 
-                    tileBuilder = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
-                    tileBuilder.rect(-1f, 2f, 1f,   1f, 2f, 1f,    1f, 2f, -1f,  -1f, 2f, -1f,  0f, 1f, 0f);
+        tileBuilder = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
+        tileBuilder.rect(-1f, 2f, 1f, 1f, 2f, 1f, 1f, 2f, -1f, -1f, 2f, -1f, 0f, 1f, 0f);
 
-                    tileBuilder = modelBuilder.part("side1", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.GREEN)));
-                    tileBuilder.rect(-1f, 0f, -1f,    1f, 0f, -1f,     1f, 0f, 1f,     -1f, 0f,  1f,    0f, -1f, 0f);
+        tileBuilder = modelBuilder.part("side1", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.GREEN)));
+        tileBuilder.rect(-1f, 0f, -1f, 1f, 0f, -1f, 1f, 0f, 1f, -1f, 0f, 1f, 0f, -1f, 0f);
 
-                    tileBuilder = modelBuilder.part("side2", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
-                    tileBuilder.rect(-1f, 2f, 1f,  -1f, 0f, 1f,      1f, 0f, 1f,      1f, 2f,  1f,    0f, 0f, 1f);
+        tileBuilder = modelBuilder.part("side2", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
+        tileBuilder.rect(-1f, 2f, 1f, -1f, 0f, 1f, 1f, 0f, 1f, 1f, 2f, 1f, 0f, 0f, 1f);
 
-                    tileBuilder = modelBuilder.part("side3", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.WHITE)));
-                    tileBuilder.rect(-1f, 2f, 1f,  -1f, 2f, -1f,  -1f, 0f, -1f,    -1f, 0f,  1f,    -1f, 0f, 0f);
+        tileBuilder = modelBuilder.part("side3", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.WHITE)));
+        tileBuilder.rect(-1f, 2f, 1f, -1f, 2f, -1f, -1f, 0f, -1f, -1f, 0f, 1f, -1f, 0f, 0f);
 
-                    tileBuilder = modelBuilder.part("site4", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.YELLOW)));
-                    tileBuilder.rect( 1f, 2f, 1f,   1f, 0f, 1f,      1f, 0f, -1f,     1f, 2f,  -1f,    0f, 0f, 1f);
+        tileBuilder = modelBuilder.part("site4", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.YELLOW)));
+        tileBuilder.rect(1f, 2f, 1f, 1f, 0f, 1f, 1f, 0f, -1f, 1f, 2f, -1f, 0f, 0f, 1f);
 
-                    tileBuilder = modelBuilder.part("site5", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.MAGENTA)));
-                    tileBuilder.rect(-1f, 2f, -1f,  1f, 2f, -1f,   1f, 0f, -1f,    -1f, 0f,  -1f,    0f, 0f, 1f);
+        tileBuilder = modelBuilder.part("site5", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.MAGENTA)));
+        tileBuilder.rect(-1f, 2f, -1f, 1f, 2f, -1f, 1f, 0f, -1f, -1f, 0f, -1f, 0f, 0f, 1f);
 
         Node node2 = modelBuilder.node();
         node2.id = "n2";
 
-            MeshPartBuilder tileBuilder1;
+        MeshPartBuilder tileBuilder1;
 
-                tileBuilder1 = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
-                tileBuilder1.rect(2f, 2f, 1f,   4f, 2f, 1f,    4f, 2f, -1f,  2f, 2f, -1f,  0f, 1f, 0f);
+        tileBuilder1 = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
+        tileBuilder1.rect(2f, 2f, 1f, 4f, 2f, 1f, 4f, 2f, -1f, 2f, 2f, -1f, 0f, 1f, 0f);
 
         model = modelBuilder.end();
 
         GameObject instance = new GameObject(model, model.nodes.get(0).id, true);
         instances.add(instance);
         instances.add(new GameObject(model, model.nodes.get(1).id, true));
+
+        selectionMaterial = new Material();
+        selectionMaterial.set(ColorAttribute.createDiffuse(Color.ORANGE));
+        originalMaterial = new Material();
 
     }
 
@@ -141,14 +148,16 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         camController.update();
         modelBatch.begin(cam);
+
+        visibleCount = 0;
+
         for (final GameObject instance : instances) {
-            //      if (isVisible(cam, instance)) {
-            modelBatch.render(instance, environment);
-           // modelBatch.render(simple_instance, environment);
-            //        visibleCount++;
-     //   }
-            visibleCount = 1;
-    }
+            if (isVisible(cam, instance)) {
+                modelBatch.render(instance, environment);
+                visibleCount++;
+            }
+        }
+
         modelBatch.end();
         stringBuilder.setLength(0);
         stringBuilder.append(" FPS: ").append(Gdx.graphics.getFramesPerSecond());
@@ -157,6 +166,68 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         label.setText(stringBuilder);
         stage.draw();
 
+    }
+
+    protected boolean isVisible (final Camera cam, final GameObject instance) {
+        instance.transform.getTranslation(position);
+        position.add(instance.center);
+        return cam.frustum.sphereInFrustum(position, instance.radius);
+    }
+
+    @Override
+    public boolean touchDown (int screenX, int screenY, int pointer, int button) {
+        selecting = getObject(screenX, screenY);
+        System.out.println("***** touchDown\n");
+        return selecting >= 0;
+    }
+
+    @Override
+    public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+        if (selecting >= 0) {
+            if (selecting == getObject(screenX, screenY)) setSelected(selecting);
+            selecting = -1;
+            return true;
+        }
+        return false;
+    }
+
+    public void setSelected (int value) {
+        if (selected == value) return;
+        if (selected >= 0) {
+            Material mat = instances.get(selected).materials.get(0);
+            mat.clear();
+            mat.set(originalMaterial);
+        }
+        selected = value;
+        if (selected >= 0) {
+            Material mat = instances.get(selected).materials.get(0);
+            originalMaterial.clear();
+            originalMaterial.set(mat);
+            mat.clear();
+            mat.set(selectionMaterial);
+        }
+    }
+
+    public int getObject (int screenX, int screenY) {
+        Ray ray = cam.getPickRay(screenX, screenY);
+        int result = -1;
+        float distance = -1;
+        for (int i = 0; i < instances.size; ++i) {
+            final GameObject instance = instances.get(i);
+            instance.transform.getTranslation(position);
+            position.add(instance.center);
+            final float len = ray.direction.dot(position.x-ray.origin.x, position.y-ray.origin.y, position.z-ray.origin.z);
+            if (len < 0f)
+                continue;
+            float dist2 = position.dst2(ray.origin.x+ray.direction.x*len, ray.origin.y+ray.direction.y*len, ray.origin.z+ray.direction.z*len);
+            if (distance >= 0f && dist2 > distance)
+                continue;
+            if (dist2 <= instance.radius * instance.radius) {
+                result = i;
+                distance = dist2;
+            }
+        }
+        return result;
     }
 
     @Override
