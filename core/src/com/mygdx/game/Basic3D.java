@@ -1,8 +1,11 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -29,6 +32,7 @@ import com.badlogic.gdx.utils.Array;
 
 
 public class Basic3D extends InputAdapter implements ApplicationListener {
+//public class Basic3D extends ApplicationAdapter implements InputProcessor {
 
     // Тип для массива инстансов моделей
     public static class GameObject extends ModelInstance {
@@ -93,7 +97,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         environment.add(new DirectionalLight().set(1.8f, 1.8f, 1.8f, -1f, -0.8f, -0.2f));
 
         camController = new CameraInputController(cam);
-        Gdx.input.setInputProcessor(camController);
+        Gdx.input.setInputProcessor(new InputMultiplexer(this,camController));
 
         ModelBuilder modelBuilder = new ModelBuilder();
 
@@ -179,6 +183,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         selecting = getObject(screenX, screenY);
         System.out.println("***** touchDown\n");
         return selecting >= 0;
+       // return true;
     }
 
     @Override
