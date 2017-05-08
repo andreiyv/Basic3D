@@ -181,7 +181,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     @Override
     public boolean touchDown (int screenX, int screenY, int pointer, int button) {
         selecting = getObject(screenX, screenY);
-        System.out.println("***** touchDown\n");
+    //    System.out.println("***** touchDown\n");
         return selecting >= 0;
        // return true;
     }
@@ -194,6 +194,18 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean touchDragged (int screenX, int screenY, int pointer) {
+        if (selecting < 0) return false;
+        if (selected == selecting) {
+            Ray ray = cam.getPickRay(screenX, screenY);
+            final float distance = -ray.origin.y / ray.direction.y;
+            position.set(ray.direction).scl(distance).add(ray.origin);
+            instances.get(selected).transform.setTranslation(position);
+        }
+        return true;
     }
 
     public void setSelected (int value) {
@@ -236,14 +248,17 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     }
 
     @Override
-    public void dispose() {
+    public void dispose () {
         modelBatch.dispose();
-        model.dispose();
+        instances.clear();
+      //  assets.dispose();
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize (int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
+
 
     @Override
     public void pause() {
