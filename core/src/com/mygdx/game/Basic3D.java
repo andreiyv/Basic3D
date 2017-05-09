@@ -49,6 +49,14 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             bounds.getDimensions(dimensions);
             radius = dimensions.len() / 2f;
         }
+
+        public GameObject(Model model, float x, float y, float z) {
+            super(model, x, y, z);
+            calculateBoundingBox(bounds);
+            bounds.getCenter(center);
+            bounds.getDimensions(dimensions);
+            radius = dimensions.len() / 2f;
+        }
     }
 
 
@@ -99,9 +107,11 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         camController = new CameraInputController(cam);
         Gdx.input.setInputProcessor(new InputMultiplexer(this,camController));
 
+        // start to build model
         ModelBuilder modelBuilder = new ModelBuilder();
 
         modelBuilder.begin();
+
         Node node1 = modelBuilder.node();
         node1.id = "n1";
 
@@ -126,18 +136,14 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         tileBuilder.rect(-1f, 2f, -1f, 1f, 2f, -1f, 1f, 0f, -1f, -1f, 0f, -1f, 0f, 0f, 1f);
 
         Node node2 = modelBuilder.node();
-        node2.id = "n2";
-
-        MeshPartBuilder tileBuilder1;
-
-        tileBuilder1 = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
-        tileBuilder1.rect(2f, 2f, 1f, 4f, 2f, 1f, 4f, 2f, -1f, 2f, 2f, -1f, 0f, 1f, 0f);
 
         model = modelBuilder.end();
 
         GameObject instance = new GameObject(model, model.nodes.get(0).id, true);
+
         instances.add(instance);
-        instances.add(new GameObject(model, model.nodes.get(1).id, true));
+        instances.add(new GameObject(model, 5f, 5f, 5f));
+        instances.add(new GameObject(model, -5f, 5f, 5f));
 
         selectionMaterial = new Material();
         selectionMaterial.set(ColorAttribute.createDiffuse(Color.ORANGE));
