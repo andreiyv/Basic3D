@@ -60,7 +60,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
     public PerspectiveCamera cam;
     public ModelBatch modelBatch;
-    public Model model;
+    public Model model, table;
     public CameraInputController camController;
     protected Stage stage;
     protected Label label;
@@ -137,16 +137,22 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         tileBuilder = modelBuilder.part("site5", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.MAGENTA)));
         tileBuilder.rect(-1f, 2f, -1f, 1f, 2f, -1f, 1f, 0f, -1f, -1f, 0f, -1f, 0f, 0f, 1f);
 
-        Node node2 = modelBuilder.node();
-        node2.id = "n2";
 
-        MeshPartBuilder table;
-        table = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.GRAY)));
-        table.box(15.0f, 0.1f, 15.f);
 
         model = modelBuilder.end();
 
-        instances.add(new GameObject(model, model.nodes.get(1).id, true));
+
+        ModelBuilder tableBuilder = new ModelBuilder();
+
+        tableBuilder.begin();
+
+        MeshPartBuilder tableMesh;
+        tableMesh = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.GRAY)));
+        tableMesh.box(9.0f, 0.1f, 9.f);
+
+        table = tableBuilder.end();
+
+        instances.add(new GameObject(table, 0f, 0f, 0f));
 
         for (int i=-2; i<1; i++) {
             for (int k = -2; k < 1; k++) {
@@ -168,24 +174,19 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-
-
         camController.update();
-
-
 
         modelBatch.begin(cam);
 
         visibleCount = 0;
+
         shadowLight.begin(Vector3.Zero, cam.direction);
         shadowBatch.begin(shadowLight.getCamera());
+
         for (final GameObject instance : instances) {
             if (isVisible(cam, instance)) {
 
-
                 shadowBatch.render(instance);
-
-
 
                 modelBatch.render(instance, environment);
                 visibleCount++;
@@ -195,8 +196,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         shadowBatch.end();
         shadowLight.end();
 
-
         modelBatch.end();
+
         stringBuilder.setLength(0);
         stringBuilder.append(" FPS: ").append(Gdx.graphics.getFramesPerSecond());
         stringBuilder.append(" Visible: ").append(visibleCount);
