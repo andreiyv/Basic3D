@@ -1,11 +1,9 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -59,7 +57,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         }
     }
 
-
     public PerspectiveCamera cam;
     public ModelBatch modelBatch;
     public Model model;
@@ -94,15 +91,15 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
 
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(5f, 5f, 5f);
+        cam.position.set(9f, 9f, 9f);
         cam.lookAt(0, 0, 0);
         cam.near = 1f;
         cam.far = 300f;
         cam.update();
 
         environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.1f, 0.1f, 0.1f, 1f));
-        environment.add(new DirectionalLight().set(1.8f, 1.8f, 1.8f, -1f, -0.8f, -0.2f));
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
+        environment.add(new DirectionalLight().set(5.f, 5.f, 0f, 0f, 0f, 0f));
 
         camController = new CameraInputController(cam);
         Gdx.input.setInputProcessor(new InputMultiplexer(this,camController));
@@ -139,11 +136,18 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         model = modelBuilder.end();
 
-        GameObject instance = new GameObject(model, model.nodes.get(0).id, true);
+//        GameObject instance = new GameObject(model, model.nodes.get(0).id, true);
 
-        instances.add(instance);
-        instances.add(new GameObject(model, 5f, 5f, 5f));
-        instances.add(new GameObject(model, -5f, 5f, 5f));
+//        instances.add(instance);
+
+        for (int i=-2; i<1; i++) {
+            for (int k = -2; k < 1; k++) {
+                instances.add(new GameObject(model, i * 3 + 1.9f, 0f, k * 3 + 1.9f));
+            }
+        }
+
+
+
 
         selectionMaterial = new Material();
         selectionMaterial.set(ColorAttribute.createDiffuse(Color.ORANGE));
