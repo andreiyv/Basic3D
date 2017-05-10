@@ -16,9 +16,10 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
@@ -74,6 +75,9 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     private Material selectionMaterial;
     private Material originalMaterial;
 
+    DirectionalShadowLight shadowLight;
+    ModelBatch shadowBatch;
+
     @Override
     public void create() {
 
@@ -91,7 +95,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
 
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(9f, 9f, 9f);
+        cam.position.set(0f, 28f, 0f);
         cam.lookAt(0, 0, 0);
         cam.near = 1f;
         cam.far = 300f;
@@ -99,7 +103,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.5f, 0.5f, 0.5f, 1f));
-        environment.add(new DirectionalLight().set(5.f, 5.f, 0f, 0f, 0f, 0f));
+        environment.add((shadowLight = new DirectionalShadowLight(1024, 1024, 30f, 30f, 1f, 100f)).set(0.8f, 0.8f, 0.8f, -1f, -.8f, -.2f));
+        environment.shadowMap = shadowLight;
 
         camController = new CameraInputController(cam);
         Gdx.input.setInputProcessor(new InputMultiplexer(this,camController));
@@ -133,12 +138,15 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         tileBuilder.rect(-1f, 2f, -1f, 1f, 2f, -1f, 1f, 0f, -1f, -1f, 0f, -1f, 0f, 0f, 1f);
 
         Node node2 = modelBuilder.node();
+        node2.id = "n2";
+
+        MeshPartBuilder table;
+        table = modelBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.GRAY)));
+        table.box(15.0f, 0.1f, 15.f);
 
         model = modelBuilder.end();
 
-//        GameObject instance = new GameObject(model, model.nodes.get(0).id, true);
-
-//        instances.add(instance);
+        instances.add(new GameObject(model, model.nodes.get(1).id, true));
 
         for (int i=-2; i<1; i++) {
             for (int k = -2; k < 1; k++) {
@@ -147,7 +155,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         }
 
 
-
+        shadowBatch = new ModelBatch(new DepthShaderProvider());
 
         selectionMaterial = new Material();
         selectionMaterial.set(ColorAttribute.createDiffuse(Color.ORANGE));
@@ -160,17 +168,33 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
+
+
         camController.update();
+
+
+
         modelBatch.begin(cam);
 
         visibleCount = 0;
-
+        shadowLight.begin(Vector3.Zero, cam.direction);
+        shadowBatch.begin(shadowLight.getCamera());
         for (final GameObject instance : instances) {
             if (isVisible(cam, instance)) {
+
+
+                shadowBatch.render(instance);
+
+
+
                 modelBatch.render(instance, environment);
                 visibleCount++;
             }
         }
+
+        shadowBatch.end();
+        shadowLight.end();
+
 
         modelBatch.end();
         stringBuilder.setLength(0);
