@@ -110,6 +110,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         SceneBuilder sceneBuilder = new SceneBuilder();
 
+        model = new Model();
+
         model = sceneBuilder.build();
 
         ModelBuilder tableBuilder = new ModelBuilder();
