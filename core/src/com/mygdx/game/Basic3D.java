@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
@@ -89,7 +90,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         modelBatch = new ModelBatch();
 /*
 
-   Up Z, Right Y, X thru the glass
+   Up Z, Right Y, X thrue the glass
  */
 
 
@@ -117,7 +118,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         ModelBuilder tableBuilder = new ModelBuilder();
 
         tableBuilder.begin();
-
+        Node node1 = tableBuilder.node();
+        node1.id = "table";
         MeshPartBuilder tableMesh;
         tableMesh = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.GRAY)));
         tableMesh.box(9.0f, 0.1f, 9.f);
@@ -161,8 +163,17 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
                 shadowBatch.render(instance);
 
                 modelBatch.render(instance, environment);
+
                 visibleCount++;
+
             }
+//            https://xoppa.github.io/blog/behind-the-3d-scenes-part2/
+if (instance.getNode())
+            instance.transform.translate(
+                    instance.bounds.getCenterX(),
+                    instance.bounds.getCenterY() + 0.0001f,
+                    instance.bounds.getCenterZ()
+            );
         }
 
         shadowBatch.end();
