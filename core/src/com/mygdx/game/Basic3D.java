@@ -78,6 +78,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     DirectionalShadowLight shadowLight;
     ModelBatch shadowBatch;
 
+    float y_base = 0.0f;
+
     @Override
     public void create() {
 
@@ -157,6 +159,10 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         shadowLight.begin(Vector3.Zero, cam.direction);
         shadowBatch.begin(shadowLight.getCamera());
 
+
+
+
+
         for (final GameObject instance : instances) {
             if (isVisible(cam, instance)) {
 
@@ -168,12 +174,16 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             }
 //            https://xoppa.github.io/blog/behind-the-3d-scenes-part2/
-if (instance.getNode())
-            instance.transform.translate(
-                    instance.bounds.getCenterX(),
-                    instance.bounds.getCenterY() + 0.0001f,
-                    instance.bounds.getCenterZ()
-            );
+if (instance.getNode("table") == null) {
+    instance.transform.translate(
+            instance.bounds.getCenterX(),
+            y_base,
+            instance.bounds.getCenterZ()
+    );
+}
+
+y_base = y_base + 0.000001f;
+
         }
 
         shadowBatch.end();
