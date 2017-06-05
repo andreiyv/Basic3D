@@ -205,7 +205,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
                         0
                 );
 
-
             }
 
            // y_base = y_base + delta;
