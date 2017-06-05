@@ -187,8 +187,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             }
 //            https://xoppa.github.io/blog/behind-the-3d-scenes-part2/
 
-
-
             if (instance.getNode("table") == null) {
 
                 if ( centerY < 1.5f && go_up) {
