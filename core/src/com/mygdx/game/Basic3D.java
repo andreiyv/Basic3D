@@ -68,7 +68,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     protected StringBuilder stringBuilder;
     public Environment environment;
     private int visibleCount;
-    private int selected = -1, selecting = -1;;
+    private int selected = -1, selecting = -1;
+    ;
     protected Array<GameObject> instances = new Array<GameObject>();
     private Vector3 position = new Vector3();
 
@@ -109,7 +110,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         environment.shadowMap = shadowLight;
 
         camController = new CameraInputController(cam);
-        Gdx.input.setInputProcessor(new InputMultiplexer(this,camController));
+        Gdx.input.setInputProcessor(new InputMultiplexer(this, camController));
 
         SceneBuilder sceneBuilder = new SceneBuilder();
 
@@ -130,7 +131,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         instances.add(new GameObject(table, 0f, 0f, 0f));
 
-        for (int i=-2; i<1; i++) {
+        for (int i = -2; i < 1; i++) {
             for (int k = -2; k < 1; k++) {
                 instances.add(new GameObject(model, i * 3 + 1.9f, 0f, k * 3 + 1.9f));
             }
@@ -159,11 +160,20 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         shadowLight.begin(Vector3.Zero, cam.direction);
         shadowBatch.begin(shadowLight.getCamera());
 
+        float delta = 0.0f;
 
+        float centerX, centerY, centerZ;
 
 
 
         for (final GameObject instance : instances) {
+
+            Vector3 position = instance.transform.getTranslation(new Vector3());
+
+            centerX = position.x;
+            centerY = position.y;
+            centerZ = position.z;
+
             if (isVisible(cam, instance)) {
 
                 shadowBatch.render(instance);
@@ -174,15 +184,27 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             }
 //            https://xoppa.github.io/blog/behind-the-3d-scenes-part2/
-if (instance.getNode("table") == null) {
-    instance.transform.translate(
-            instance.bounds.getCenterX(),
-            y_base,
-            instance.bounds.getCenterZ()
-    );
-}
 
-y_base = y_base + 0.000001f;
+
+
+            if (instance.getNode("table") == null) {
+
+                if ( centerY < 1.5f) {
+                    delta = 0.000001f;
+                } else {
+                    delta = -0.000001f;
+                }
+
+                instance.transform.trn(
+                        centerX,
+                        centerY + delta,
+                        centerZ
+                );
+
+
+            }
+
+           // y_base = y_base + delta;
 
         }
 
@@ -200,22 +222,22 @@ y_base = y_base + 0.000001f;
 
     }
 
-    protected boolean isVisible (final Camera cam, final GameObject instance) {
+    protected boolean isVisible(final Camera cam, final GameObject instance) {
         instance.transform.getTranslation(position);
         position.add(instance.center);
         return cam.frustum.sphereInFrustum(position, instance.radius);
     }
 
     @Override
-    public boolean touchDown (int screenX, int screenY, int pointer, int button) {
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         selecting = getObject(screenX, screenY);
-    //    System.out.println("***** touchDown\n");
+        //    System.out.println("***** touchDown\n");
         return selecting >= 0;
-       // return true;
+        // return true;
     }
 
     @Override
-    public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (selecting >= 0) {
             if (selecting == getObject(screenX, screenY)) setSelected(selecting);
             selecting = -1;
@@ -225,7 +247,7 @@ y_base = y_base + 0.000001f;
     }
 
     @Override
-    public boolean touchDragged (int screenX, int screenY, int pointer) {
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
         if (selecting < 0) return false;
         if (selected == selecting) {
             Ray ray = cam.getPickRay(screenX, screenY);
@@ -236,7 +258,7 @@ y_base = y_base + 0.000001f;
         return true;
     }
 
-    public void setSelected (int value) {
+    public void setSelected(int value) {
         if (selected == value) return;
         if (selected >= 0) {
             Material mat = instances.get(selected).materials.get(0);
@@ -253,7 +275,7 @@ y_base = y_base + 0.000001f;
         }
     }
 
-    public int getObject (int screenX, int screenY) {
+    public int getObject(int screenX, int screenY) {
         Ray ray = cam.getPickRay(screenX, screenY);
         int result = -1;
         float distance = -1;
@@ -261,10 +283,10 @@ y_base = y_base + 0.000001f;
             final GameObject instance = instances.get(i);
             instance.transform.getTranslation(position);
             position.add(instance.center);
-            final float len = ray.direction.dot(position.x-ray.origin.x, position.y-ray.origin.y, position.z-ray.origin.z);
+            final float len = ray.direction.dot(position.x - ray.origin.x, position.y - ray.origin.y, position.z - ray.origin.z);
             if (len < 0f)
                 continue;
-            float dist2 = position.dst2(ray.origin.x+ray.direction.x*len, ray.origin.y+ray.direction.y*len, ray.origin.z+ray.direction.z*len);
+            float dist2 = position.dst2(ray.origin.x + ray.direction.x * len, ray.origin.y + ray.direction.y * len, ray.origin.z + ray.direction.z * len);
             if (distance >= 0f && dist2 > distance)
                 continue;
             if (dist2 <= instance.radius * instance.radius) {
@@ -276,14 +298,14 @@ y_base = y_base + 0.000001f;
     }
 
     @Override
-    public void dispose () {
+    public void dispose() {
         modelBatch.dispose();
         instances.clear();
-      //  assets.dispose();
+        //  assets.dispose();
     }
 
     @Override
-    public void resize (int width, int height) {
+    public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
