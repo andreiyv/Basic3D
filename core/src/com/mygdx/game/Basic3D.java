@@ -78,8 +78,12 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
     DirectionalShadowLight shadowLight;
     ModelBatch shadowBatch;
+    float delta = 0.0f;
 
+    float centerX, centerY, centerZ;
     float y_base = 0.0f;
+
+    boolean go_up = true;
 
     @Override
     public void create() {
@@ -160,9 +164,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         shadowLight.begin(Vector3.Zero, cam.direction);
         shadowBatch.begin(shadowLight.getCamera());
 
-        float delta = 0.0f;
 
-        float centerX, centerY, centerZ;
 
 
 
@@ -189,16 +191,18 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             if (instance.getNode("table") == null) {
 
-                if ( centerY < 1.5f) {
-                    delta = 0.000001f;
+                if ( centerY < 1.5f && go_up) {
+                    delta = 0.01f;
                 } else {
-                    delta = -0.000001f;
+                    go_up =false;
+                    delta = -0.01f;
+                    if ( centerY < 0.5f ) go_up = true;
                 }
 
                 instance.transform.trn(
-                        centerX,
-                        centerY + delta,
-                        centerZ
+                        0,
+                        delta,
+                        0
                 );
 
 
@@ -215,8 +219,9 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         stringBuilder.setLength(0);
         stringBuilder.append(" FPS: ").append(Gdx.graphics.getFramesPerSecond());
-        stringBuilder.append(" Visible: ").append(visibleCount);
-        stringBuilder.append(" Selected: ").append(selected);
+      //  stringBuilder.append(" Visible: ").append(visibleCount);
+      //  stringBuilder.append(" Selected: ").append(selected);
+        stringBuilder.append(" CenterY: ").append(centerY);
         label.setText(stringBuilder);
         stage.draw();
 
