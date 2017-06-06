@@ -164,10 +164,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         shadowLight.begin(Vector3.Zero, cam.direction);
         shadowBatch.begin(shadowLight.getCamera());
 
-
-
-
-
         for (final GameObject instance : instances) {
 
             Vector3 position = instance.transform.getTranslation(new Vector3());
@@ -255,7 +251,10 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             Ray ray = cam.getPickRay(screenX, screenY);
             final float distance = -ray.origin.y / ray.direction.y;
             position.set(ray.direction).scl(distance).add(ray.origin);
-            instances.get(selected).transform.setTranslation(position);
+//            instances.get(selected).transform.setTranslation(position);
+
+            instances.get(selected).transform.trn(position.x/100.0f,position.y/100.0f,position.z/100.0f);
+
         }
         return true;
     }
