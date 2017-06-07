@@ -74,6 +74,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
     protected boolean[] cube_up = {false, false, false, false, false, false, false, false, false, false};
     protected boolean[] cube_down = {false, false, false, false, false, false, false, false, false, false};
+    protected int[] cube_iter = {0,0,0,0,0,0,0,0,0,0};
 
     private Vector3 position = new Vector3();
 
@@ -166,8 +167,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         shadowLight.begin(Vector3.Zero, cam.direction);
         shadowBatch.begin(shadowLight.getCamera());
 
-        int n = 0;
-
         for (int i = 0; i < instances.size; i++) {
 
             Vector3 position = instances.get(i).transform.getTranslation(new Vector3());
@@ -189,23 +188,21 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             if (instances.get(i).getNode("table") == null) {
 
-                if (cube_up[i]) {
-                    delta = 0.05f;
+                if (cube_up[i] && cube_iter[i] < 100) {
+                    delta = 0.1f;
+                    cube_iter[i] = cube_iter[i] + 1;
+                    instances.get(i).transform.trn(0, delta, 0);
                 }
-                if (cube_down[i]) {
-                    delta = -0.05f;
+
+                if (cube_down[i]  && cube_iter[i] > 0) {
+                    delta = -0.1f;
+                    cube_iter[i] = cube_iter[i] - 1;
+                    instances.get(i).transform.trn(0, delta, 0);
                 }
 
 
-                instances.get(i).transform.trn(
-                        0,
-                        delta,
-                        0
-                );
 
             }
-
-            n++;
 
         }
 
@@ -234,7 +231,14 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         selecting = getObject(screenX, screenY);
         //    System.out.println("***** touchDown\n");
-        cube_up[selecting] = true;
+        if (selecting > 0 && selecting < 10) {
+            if (cube_up[selecting]) {
+                cube_down[selecting] = true;
+                cube_up[selecting] = false;
+            } else {
+                cube_up[selecting] = true;
+            }
+        }
         return selecting >= 0;
         // return true;
     }
