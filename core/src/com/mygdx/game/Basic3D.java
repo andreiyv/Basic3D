@@ -95,12 +95,10 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         stringBuilder = new StringBuilder();
 
         modelBatch = new ModelBatch();
+
 /*
-
-   Up Z, Right Y, X thrue the glass
+   Up Z, Right Y, X through the glass
  */
-
-
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(0f, 28f, 0f);
         cam.lookAt(0, 0, 0);
@@ -164,36 +162,38 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         shadowLight.begin(Vector3.Zero, cam.direction);
         shadowBatch.begin(shadowLight.getCamera());
 
-        for (final GameObject instance : instances) {
+        int n = 0;
 
-            Vector3 position = instance.transform.getTranslation(new Vector3());
+        for (int i=0; i < instances.size; i++) {
+
+            Vector3 position = instances.get(i).transform.getTranslation(new Vector3());
 
             centerX = position.x;
             centerY = position.y;
             centerZ = position.z;
 
-            if (isVisible(cam, instance)) {
+            if (isVisible(cam, instances.get(i))) {
 
-                shadowBatch.render(instance);
+                shadowBatch.render(instances.get(i));
 
-                modelBatch.render(instance, environment);
+                modelBatch.render(instances.get(i), environment);
 
                 visibleCount++;
 
             }
 //            https://xoppa.github.io/blog/behind-the-3d-scenes-part2/
 
-            if (instance.getNode("table") == null) {
+            if (instances.get(i).getNode("table") == null) {
 
                 if ( centerY < 1.5f && go_up) {
-                    delta = 0.01f;
+                    delta = 0.01f * n * 0.5f;
                 } else {
                     go_up =false;
-                    delta = -0.01f;
+                    delta = -0.01f * n * 0.5f;
                     if ( centerY < 0.5f ) go_up = true;
                 }
 
-                instance.transform.trn(
+                instances.get(i).transform.trn(
                         0,
                         delta,
                         0
@@ -202,6 +202,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             }
 
            // y_base = y_base + delta;
+
+            n++;
 
         }
 
@@ -253,7 +255,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             position.set(ray.direction).scl(distance).add(ray.origin);
 //            instances.get(selected).transform.setTranslation(position);
 
-            instances.get(selected).transform.trn(position.x/100.0f,position.y/100.0f,position.z/100.0f);
+            instances.get(selected).transform.trn(position.x/50.0f,position.y/50.0f,position.z/50.0f);
 
         }
         return true;
