@@ -59,6 +59,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     }
 
     public PerspectiveCamera cam;
+    //public OrthographicCamera cam;
     public ModelBatch modelBatch;
     public Model model, table;
     public CameraInputController camController;
@@ -104,8 +105,16 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 /*
    Up Z, Right Y, X through the glass
  */
-        cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(0f, 27f, 0f);
+        cam = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+
+      //  cam = new OrthographicCamera(30, 30 * (h / w));
+      //  cam.position.set(0f, 20f, 0f);
+      //  cam.lookAt(0,0,0);
+      //  cam.update();
+
+        cam.position.set(0f, 14f, 0f);
         cam.lookAt(0, 0, 0);
         cam.near = 1f;
         cam.far = 300f;
@@ -131,8 +140,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         Node node1 = tableBuilder.node();
         node1.id = "table";
         MeshPartBuilder tableMesh;
-        tableMesh = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.GRAY)));
-        tableMesh.box(9.0f, 0.1f, 9.f);
+        tableMesh = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
+        tableMesh.box(14.0f, 0.1f, 14.f);
 
         table = tableBuilder.end();
 
@@ -188,17 +197,21 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             if (instances.get(i).getNode("table") == null) {
 
-                if (cube_up[i] && cube_iter[i] < 100) {
-                    delta = 0.1f;
+                if (cube_up[i] && cube_iter[i] < 5) {
+                    delta = 0.15f;
                     cube_iter[i] = cube_iter[i] + 1;
                     instances.get(i).transform.trn(0, delta, 0);
                 }
 
+                if (cube_up[i] && cube_iter[i] == 4) cube_up[i] = false;
+
                 if (cube_down[i]  && cube_iter[i] > 0) {
-                    delta = -0.1f;
+                    delta = -0.15f;
                     cube_iter[i] = cube_iter[i] - 1;
                     instances.get(i).transform.trn(0, delta, 0);
                 }
+
+                if (cube_down[i] && cube_iter[i] == 0) cube_down[i] = false;
 
 
 
@@ -215,7 +228,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         stringBuilder.append(" FPS: ").append(Gdx.graphics.getFramesPerSecond());
         //  stringBuilder.append(" Visible: ").append(visibleCount);
         //  stringBuilder.append(" Selected: ").append(selected);
-        stringBuilder.append(" CenterY: ").append(centerY);
+        stringBuilder.append("selecting: ").append(selecting);
         label.setText(stringBuilder);
         stage.draw();
 
@@ -232,12 +245,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         selecting = getObject(screenX, screenY);
         //    System.out.println("***** touchDown\n");
         if (selecting > 0 && selecting < 10) {
-            if (cube_up[selecting]) {
-                cube_down[selecting] = true;
-                cube_up[selecting] = false;
-            } else {
-                cube_up[selecting] = true;
-            }
+            if (cube_iter[selecting] == 4) cube_down[selecting] = true;
+            if (cube_iter[selecting] == 0) cube_up[selecting] = true;
         }
         return selecting >= 0;
         // return true;
