@@ -71,6 +71,10 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     private int selected = -1, selecting = -1;
     ;
     protected Array<GameObject> instances = new Array<GameObject>();
+
+    protected boolean[] cube_up = {false, false, false, false, false, false, false, false, false, false};
+    protected boolean[] cube_down = {false, false, false, false, false, false, false, false, false, false};
+
     private Vector3 position = new Vector3();
 
     private Material selectionMaterial;
@@ -100,7 +104,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
    Up Z, Right Y, X through the glass
  */
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(0f, 28f, 0f);
+        cam.position.set(0f, 27f, 0f);
         cam.lookAt(0, 0, 0);
         cam.near = 1f;
         cam.far = 300f;
@@ -164,7 +168,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         int n = 0;
 
-        for (int i=0; i < instances.size; i++) {
+        for (int i = 0; i < instances.size; i++) {
 
             Vector3 position = instances.get(i).transform.getTranslation(new Vector3());
 
@@ -185,13 +189,13 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             if (instances.get(i).getNode("table") == null) {
 
-                if ( centerY < 1.5f && go_up) {
-                    delta = 0.01f * n * 0.5f;
-                } else {
-                    go_up =false;
-                    delta = -0.01f * n * 0.5f;
-                    if ( centerY < 0.5f ) go_up = true;
+                if (cube_up[i]) {
+                    delta = 0.05f;
                 }
+                if (cube_down[i]) {
+                    delta = -0.05f;
+                }
+
 
                 instances.get(i).transform.trn(
                         0,
@@ -200,8 +204,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
                 );
 
             }
-
-           // y_base = y_base + delta;
 
             n++;
 
@@ -214,8 +216,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         stringBuilder.setLength(0);
         stringBuilder.append(" FPS: ").append(Gdx.graphics.getFramesPerSecond());
-      //  stringBuilder.append(" Visible: ").append(visibleCount);
-      //  stringBuilder.append(" Selected: ").append(selected);
+        //  stringBuilder.append(" Visible: ").append(visibleCount);
+        //  stringBuilder.append(" Selected: ").append(selected);
         stringBuilder.append(" CenterY: ").append(centerY);
         label.setText(stringBuilder);
         stage.draw();
@@ -232,6 +234,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         selecting = getObject(screenX, screenY);
         //    System.out.println("***** touchDown\n");
+        cube_up[selecting] = true;
         return selecting >= 0;
         // return true;
     }
@@ -255,7 +258,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             position.set(ray.direction).scl(distance).add(ray.origin);
 //            instances.get(selected).transform.setTranslation(position);
 
-            instances.get(selected).transform.trn(position.x/50.0f,position.y/50.0f,position.z/50.0f);
+            instances.get(selected).transform.trn(position.x / 50.0f, position.y / 50.0f, position.z / 50.0f);
 
         }
         return true;
