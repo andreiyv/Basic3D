@@ -77,6 +77,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     protected boolean[] cube_down = {false, false, false, false, false, false, false, false, false, false};
     protected int[] cube_iter = {0,0,0,0,0,0,0,0,0,0};
 
+    public int MAX_UP = 9;
+
     private Vector3 position = new Vector3();
 
     private Material selectionMaterial;
@@ -114,8 +116,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
       //  cam.lookAt(0,0,0);
       //  cam.update();
 
-        cam.position.set(0f, 14f, 0f);
-        cam.lookAt(0, 0, 0);
+        cam.position.set(-1.1f, 14f, 0.0f);
+        cam.lookAt(-0.4f, 0, 0);
         cam.near = 1f;
         cam.far = 300f;
         cam.update();
@@ -147,9 +149,11 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         instances.add(new GameObject(table, 0f, 0f, 0f));
 
+        instances.get(0).transform.trn(-2.0f, 0, -1.5f);
+
         for (int i = -2; i < 1; i++) {
             for (int k = -2; k < 1; k++) {
-                instances.add(new GameObject(model, i * 3 + 1.9f, 0f, k * 3 + 1.9f));
+                instances.add(new GameObject(model, i * 3 + 0.1f, 0f, k * 3 + 0.1f));
             }
         }
 
@@ -197,16 +201,16 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             if (instances.get(i).getNode("table") == null) {
 
-                if (cube_up[i] && cube_iter[i] < 5) {
-                    delta = 0.15f;
+                if (cube_up[i] && cube_iter[i] < MAX_UP) {
+                    delta = MAX_UP/30.0f;
                     cube_iter[i] = cube_iter[i] + 1;
                     instances.get(i).transform.trn(0, delta, 0);
                 }
 
-                if (cube_up[i] && cube_iter[i] == 4) cube_up[i] = false;
+                if (cube_up[i] && cube_iter[i] == (MAX_UP -1) ) cube_up[i] = false;
 
                 if (cube_down[i]  && cube_iter[i] > 0) {
-                    delta = -0.15f;
+                    delta = -MAX_UP/30.0f;
                     cube_iter[i] = cube_iter[i] - 1;
                     instances.get(i).transform.trn(0, delta, 0);
                 }
@@ -245,10 +249,10 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         selecting = getObject(screenX, screenY);
         //    System.out.println("***** touchDown\n");
         if (selecting > 0 && selecting < 10) {
-            if (cube_iter[selecting] == 4) cube_down[selecting] = true;
+            if (cube_iter[selecting] == (MAX_UP - 1)) cube_down[selecting] = true;
             if (cube_iter[selecting] == 0) cube_up[selecting] = true;
         }
-        return selecting >= 0;
+        return selecting > 0;
         // return true;
     }
 
