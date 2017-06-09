@@ -275,7 +275,9 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             position.set(ray.direction).scl(distance).add(ray.origin);
 //            instances.get(selected).transform.setTranslation(position);
 
-            instances.get(selected).transform.trn(position.x / 50.0f, position.y / 50.0f, position.z / 50.0f);
+            //instances.get(selected).transform.trn(position.x / 50.0f, position.y / 50.0f, position.z / 50.0f);
+            Vector3 position = instances.get(selected).transform.getTranslation(new Vector3());
+            instances.get(selected).transform.rotate(position.x,position.y,position.z, 1.5708f);
 
         }
         return true;
