@@ -268,6 +268,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        BoundingBox cube_bound = new BoundingBox();
         if (selecting < 0) return false;
         if (selected == selecting) {
             Ray ray = cam.getPickRay(screenX, screenY);
@@ -277,7 +278,10 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             //instances.get(selected).transform.trn(position.x / 50.0f, position.y / 50.0f, position.z / 50.0f);
             Vector3 position = instances.get(selected).transform.getTranslation(new Vector3());
-            instances.get(selected).transform.rotate(position.x,position.y,position.z, 1.5708f);
+            instances.get(selected).calculateBoundingBox(cube_bound);
+           // instances.get(selected).transform.setFromEulerAngles(1.0f,0,0);
+            instances.get(selected).transform.rotate(cube_bound.getCenterX(), cube_bound.getCenterY(), cube_bound.getCenterZ(), 1.5f);
+
 
         }
         return true;
