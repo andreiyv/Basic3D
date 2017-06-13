@@ -70,7 +70,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     public Environment environment;
     private int visibleCount;
     private int selected = -1, selecting = -1;
-    ;
+    Vector3 cube_position;
     protected Array<GameObject> instances = new Array<GameObject>();
 
     protected boolean[] cube_up = {false, false, false, false, false, false, false, false, false, false};
@@ -81,7 +81,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     public int MAX_UP = 9;
 
     private Vector3 position = new Vector3();
-
+    float delta_x, delta_y, delta_z;
     private Material selectionMaterial;
     private Material originalMaterial;
 
@@ -202,7 +202,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             if (instances.get(i).getNode("table") == null) {
 
-                if (cube_up[i] && cube_iter[i] < MAX_UP) {
+ /*               if (cube_up[i] && cube_iter[i] < MAX_UP) {
                     delta = MAX_UP/30.0f;
                     cube_iter[i] = cube_iter[i] + 1;
                     instances.get(i).transform.trn(0, delta, 0);
@@ -217,17 +217,42 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
                 }
 
                 if (cube_down[i] && cube_iter[i] == 0) cube_down[i] = false;
+*/
 
                 if (cube_rotate[i]) {
-                    Vector3 cube_position = instances.get(i).transform.getTranslation(new Vector3());
-                    instances.get(i).transform.translate(0,0,0);
 
+                    if (cube_position.x >= 0 ) {
+                        delta_x = -cube_position.x;
+                    } else {
+                        delta_x = cube_position.x;
+                    }
 
+                    if (cube_position.y >= 0 ) {
+                        delta_y = -cube_position.y;
+                    } else {
+                        delta_y = cube_position.y;
+                    }
+
+                    if (cube_position.z >= 0 ) {
+                        delta_z = -cube_position.z;
+                    } else {
+                        delta_z = cube_position.z;
+                    }
+
+                    BoundingBox cube_bounds = new BoundingBox();
+                    instances.get(i).calculateBoundingBox(cube_bounds);
+                    instances.get(i).transform.translate(-cube_position.x+cube_bounds.getCenterX(),
+                            -cube_position.y+cube_bounds.getCenterY(),
+                            -cube_position.z+cube_bounds.getCenterZ() );
                     Vector3 cube_position_m = instances.get(i).transform.getTranslation(new Vector3());
                     instances.get(i).transform.rotate(1,0,0, 1.5f);
-                    instances.get(i).transform.translate(cube_position.scl(-1));
-                }
+                    instances.get(i).transform.translate(cube_position.x-cube_bounds.getCenterX(),
+                            cube_position.y-cube_bounds.getCenterY(),
+                            cube_position.z-cube_bounds.getCenterZ());
 
+                 //   instances.get(i).transform.rotate(1,0,0,1.5f);
+
+                }
 
             }
 
@@ -239,10 +264,12 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         modelBatch.end();
 
         stringBuilder.setLength(0);
-        stringBuilder.append(" FPS: ").append(Gdx.graphics.getFramesPerSecond());
+       // stringBuilder.append(" FPS: ").append(Gdx.graphics.getFramesPerSecond());
         //  stringBuilder.append(" Visible: ").append(visibleCount);
         //  stringBuilder.append(" Selected: ").append(selected);
-        stringBuilder.append("selecting: ").append(selecting);
+        stringBuilder.append("d_x: ").append(delta_x);
+        stringBuilder.append("d_y: ").append(delta_y);
+        stringBuilder.append("d_z: ").append(delta_z);
         label.setText(stringBuilder);
         stage.draw();
 
@@ -261,6 +288,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         if (selecting > 0 && selecting < 10) {
             if (cube_iter[selecting] == (MAX_UP - 1)) cube_down[selecting] = true;
             if (cube_iter[selecting] == 0) cube_up[selecting] = true;
+            cube_position = instances.get(selecting).transform.getTranslation(new Vector3());
         }
         return selecting > 0;
         // return true;
