@@ -241,11 +241,15 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
                     BoundingBox cube_bounds = new BoundingBox();
                     instances.get(i).calculateBoundingBox(cube_bounds);
+
                     instances.get(i).transform.translate(-cube_position.x+cube_bounds.getCenterX(),
                             -cube_position.y+cube_bounds.getCenterY(),
                             -cube_position.z+cube_bounds.getCenterZ() );
+
                     Vector3 cube_position_m = instances.get(i).transform.getTranslation(new Vector3());
+
                     instances.get(i).transform.rotate(1,0,0, 1.5f);
+
                     instances.get(i).transform.translate(cube_position.x-cube_bounds.getCenterX(),
                             cube_position.y-cube_bounds.getCenterY(),
                             cube_position.z-cube_bounds.getCenterZ());
