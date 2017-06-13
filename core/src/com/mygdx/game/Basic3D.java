@@ -75,6 +75,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
     protected boolean[] cube_up = {false, false, false, false, false, false, false, false, false, false};
     protected boolean[] cube_down = {false, false, false, false, false, false, false, false, false, false};
+    protected boolean[] cube_rotate = {false, false, false, false, false, false, false, false, false, false};
     protected int[] cube_iter = {0,0,0,0,0,0,0,0,0,0};
 
     public int MAX_UP = 9;
@@ -217,6 +218,15 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
                 if (cube_down[i] && cube_iter[i] == 0) cube_down[i] = false;
 
+                if (cube_rotate[i]) {
+                    Vector3 cube_position = instances.get(i).transform.getTranslation(new Vector3());
+                    instances.get(i).transform.translate(0,0,0);
+
+
+                    Vector3 cube_position_m = instances.get(i).transform.getTranslation(new Vector3());
+                    instances.get(i).transform.rotate(1,0,0, 1.5f);
+                    instances.get(i).transform.translate(cube_position.scl(-1));
+                }
 
 
             }
@@ -260,6 +270,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (selecting >= 0) {
             if (selecting == getObject(screenX, screenY)) setSelected(selecting);
+            cube_rotate[selecting] = false;
             selecting = -1;
             return true;
         }
@@ -268,17 +279,18 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        BoundingBox cube_bound = new BoundingBox();
+
         if (selecting < 0) return false;
         if (selected == selecting) {
             cube_up[selected] = false;
             cube_down[selected] = false;
+            cube_rotate[selected] = true;
             Ray ray = cam.getPickRay(screenX, screenY);
             final float distance = -ray.origin.y / ray.direction.y;
             position.set(ray.direction).scl(distance).add(ray.origin);
-            instances.get(selected).calculateBoundingBox(cube_bound);
 
-            instances.get(selected).transform.rotate(1,0,0, 1.5f);
+
+
 
 
         }
