@@ -282,6 +282,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     public boolean touchDragged(int screenX, int screenY, int pointer) {
 
         if (selecting < 0) return false;
+
         if (selected == selecting) {
             cube_up[selected] = false;
             cube_down[selected] = false;
@@ -289,10 +290,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             Ray ray = cam.getPickRay(screenX, screenY);
             final float distance = -ray.origin.y / ray.direction.y;
             position.set(ray.direction).scl(distance).add(ray.origin);
-
-
-
-
 
         }
         return true;
