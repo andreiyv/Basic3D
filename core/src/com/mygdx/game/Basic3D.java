@@ -152,8 +152,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         instances.get(0).transform.trn(-2.0f, 0, -1.5f);
 
-        for (int i = -2; i < 1; i++) {
-            for (int k = -2; k < 1; k++) {
+        for (int i = 0; i < 3; i++) {
+            for (int k = 0; k < 3; k++) {
                 instances.add(new GameObject(model, i * 3 + 0.1f, 0f, k * 3 + 0.1f));
             }
         }
@@ -241,18 +241,18 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
                     BoundingBox cube_bounds = new BoundingBox();
                     instances.get(i).calculateBoundingBox(cube_bounds);
+/*
+   Up Z, Right Y, X through the glass
+ */
+                    float move = 0.25f;
 
-                    instances.get(i).transform.translate(-cube_position.x+cube_bounds.getCenterX(),
-                            -cube_position.y+cube_bounds.getCenterY(),
-                            -cube_position.z+cube_bounds.getCenterZ() );
+                    instances.get(i).transform.translate(10.5f, 0.25f, -0.25f );
 
                     Vector3 cube_position_m = instances.get(i).transform.getTranslation(new Vector3());
 
                     instances.get(i).transform.rotate(1,0,0, 1.5f);
 
-                    instances.get(i).transform.translate(cube_position.x-cube_bounds.getCenterX(),
-                            cube_position.y-cube_bounds.getCenterY(),
-                            cube_position.z-cube_bounds.getCenterZ());
+                    instances.get(i).transform.translate(-10.5f, -0.25f, 0.25f);
 
                  //   instances.get(i).transform.rotate(1,0,0,1.5f);
 
