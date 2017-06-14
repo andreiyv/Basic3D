@@ -152,8 +152,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         instances.get(0).transform.trn(-2.0f, 0, -1.5f);
 
-        for (int i = 0; i < 3; i++) {
-            for (int k = 0; k < 3; k++) {
+        for (int i = -2; i < 1; i++) {
+            for (int k = -2; k < 1; k++) {
                 instances.add(new GameObject(model, i * 3 + 0.1f, 0f, k * 3 + 0.1f));
             }
         }
@@ -202,7 +202,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
             if (instances.get(i).getNode("table") == null) {
 
- /*               if (cube_up[i] && cube_iter[i] < MAX_UP) {
+                if (cube_up[i] && cube_iter[i] < MAX_UP) {
                     delta = MAX_UP/30.0f;
                     cube_iter[i] = cube_iter[i] + 1;
                     instances.get(i).transform.trn(0, delta, 0);
@@ -217,44 +217,13 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
                 }
 
                 if (cube_down[i] && cube_iter[i] == 0) cube_down[i] = false;
-*/
+
 
                 if (cube_rotate[i]) {
-
-                    if (cube_position.x >= 0 ) {
-                        delta_x = -cube_position.x;
-                    } else {
-                        delta_x = cube_position.x;
-                    }
-
-                    if (cube_position.y >= 0 ) {
-                        delta_y = -cube_position.y;
-                    } else {
-                        delta_y = cube_position.y;
-                    }
-
-                    if (cube_position.z >= 0 ) {
-                        delta_z = -cube_position.z;
-                    } else {
-                        delta_z = cube_position.z;
-                    }
-
-                    BoundingBox cube_bounds = new BoundingBox();
-                    instances.get(i).calculateBoundingBox(cube_bounds);
 /*
    Up Y, Right Z, X down
  */
-                    float move = 0.25f;
-
-                    instances.get(i).transform.translate(0.0f, 1.0f, -0.15f );
-
-                    Vector3 cube_position_m = instances.get(i).transform.getTranslation(new Vector3());
-
-                    instances.get(i).transform.rotate(1,0,0, 1.5f);
-
-                    instances.get(i).transform.translate(0.0f, -1.0f, 0.15f);
-
-                 //   instances.get(i).transform.rotate(1,0,0,1.5f);
+                    instances.get(i).transform.translate(0.0f, 1.0f, 0.0f).rotate(1,0,0, 15.0f).translate(0.0f, -1.0f, 0.0f);
 
                 }
 
