@@ -22,9 +22,6 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.input.GestureDetector.GestureListener;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
@@ -33,9 +30,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 
 
-public class Basic3D extends InputAdapter implements ApplicationListener, GestureListener {
+public class Basic3D extends InputAdapter implements ApplicationListener {
 //public class Basic3D extends ApplicationAdapter implements InputProcessor {
-private String message = "No gesture performed yet";
 
     // Тип для массива инстансов моделей
     public static class GameObject extends ModelInstance {
@@ -67,7 +63,6 @@ private String message = "No gesture performed yet";
     public ModelBatch modelBatch;
     public Model model, table;
     public CameraInputController camController;
-    public GestureDetector gd;
     protected Stage stage;
     protected Label label;
     protected BitmapFont font;
@@ -134,16 +129,7 @@ private String message = "No gesture performed yet";
         environment.shadowMap = shadowLight;
 
         camController = new CameraInputController(cam);
-
-        gd = new GestureDetector(this);
-
- //       Gdx.input.setInputProcessor(new InputMultiplexer(this, camController));
-
-        InputMultiplexer im = new InputMultiplexer();
-        im.addProcessor(this);
-        im.addProcessor(gd);
-        im.addProcessor(camController);
-        Gdx.input.setInputProcessor(im);
+        Gdx.input.setInputProcessor(new InputMultiplexer(this, camController));
 
         SceneBuilder sceneBuilder = new SceneBuilder();
 
@@ -187,7 +173,6 @@ private String message = "No gesture performed yet";
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         camController.update();
-
 
         modelBatch.begin(cam);
 
@@ -246,10 +231,6 @@ private String message = "No gesture performed yet";
 
         }
 
-
-
-
-
         shadowBatch.end();
         shadowLight.end();
 
@@ -259,8 +240,9 @@ private String message = "No gesture performed yet";
        // stringBuilder.append(" FPS: ").append(Gdx.graphics.getFramesPerSecond());
         //  stringBuilder.append(" Visible: ").append(visibleCount);
         //  stringBuilder.append(" Selected: ").append(selected);
-        stringBuilder.append(message);
-
+        stringBuilder.append("d_x: ").append(delta_x);
+        stringBuilder.append("d_y: ").append(delta_y);
+        stringBuilder.append("d_z: ").append(delta_z);
         label.setText(stringBuilder);
         stage.draw();
 
@@ -270,12 +252,6 @@ private String message = "No gesture performed yet";
         instance.transform.getTranslation(position);
         position.add(instance.center);
         return cam.frustum.sphereInFrustum(position, instance.radius);
-    }
-
-    @Override
-    public boolean tap(float x, float y, int count, int button) {
-        message = "Tap performed, finger" + Integer.toString(button);
-        return true;
     }
 
     @Override
@@ -308,26 +284,14 @@ private String message = "No gesture performed yet";
         if (selecting < 0) return false;
 
         if (selected == selecting) {
-
+            cube_up[selected] = false;
+            cube_down[selected] = false;
+            cube_rotate[selected] = true;
             Ray ray = cam.getPickRay(screenX, screenY);
             final float distance = -ray.origin.y / ray.direction.y;
-
-           // if (distance > 15.0f ) {
-                cube_up[selected] = false;
-                cube_down[selected] = false;
-                cube_rotate[selected] = true;
-           // }
             position.set(ray.direction).scl(distance).add(ray.origin);
 
         }
-        return true;
-    }
-
-    @Override
-    public boolean zoom(float initialDistance, float distance) {
-        message = "Zoom performed, initial Distance:" + Float.toString(initialDistance) +
-                " Distance: " + Float.toString(distance);
-//        Gdx.app.log("INFO", message);
         return true;
     }
 
@@ -390,59 +354,4 @@ private String message = "No gesture performed yet";
     @Override
     public void resume() {
     }
-
-
-    @Override
-    public boolean touchDown(float x, float y, int pointer, int button) {
-        // TODO Auto-generated method stub
-        return true;
-    }
-
-
-    @Override
-    public boolean longPress(float x, float y) {
-        message = "Long press performed";
-        return true;
-    }
-
-    @Override
-    public boolean fling(float velocityX, float velocityY, int button) {
-        message = "Fling performed, velocity:" + Float.toString(velocityX) +
-                "," + Float.toString(velocityY);
-        return true;
-    }
-
-    @Override
-    public boolean pan(float x, float y, float deltaX, float deltaY) {
-        message = "Pan performed, delta:" + Float.toString(deltaX) +
-                "," + Float.toString(deltaY);
-        return true;
-    }
-
-
-
-    @Override
-    public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
-                         Vector2 pointer1, Vector2 pointer2) {
-        message = "Pinch performed";
-        return true;
-    }
-
-
-@Override
-
-public void pinchStop(){
-    message = "PinchStop performed";
-
-}
-
-@Override
-    public boolean panStop(float x, float y, int pointer, int button){
-    message = "panStop performed";
-    return true;
-    }
-
-
-
-
 }
