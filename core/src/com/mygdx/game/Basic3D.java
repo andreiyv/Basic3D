@@ -346,7 +346,6 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         stage.getViewport().update(width, height, true);
     }
 
-
     @Override
     public void pause() {
     }

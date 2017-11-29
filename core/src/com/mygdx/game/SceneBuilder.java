@@ -52,8 +52,6 @@ public class SceneBuilder {
         tileBuilder = modelBuilder.part("site5", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.MAGENTA)));
         tileBuilder.rect(-1f, 2f, -1f, 1f, 2f, -1f, 1f, 0f, -1f, -1f, 0f, -1f, 0f, 0f, 1f);
 
-
-
         model = modelBuilder.end();
         
         return model;
