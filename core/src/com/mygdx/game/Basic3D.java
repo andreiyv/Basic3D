@@ -29,7 +29,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Array;
 
-
 public class Basic3D extends InputAdapter implements ApplicationListener {
 //public class Basic3D extends ApplicationAdapter implements InputProcessor {
 
@@ -190,13 +189,9 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             centerZ = position.z;
 
             if (isVisible(cam, instances.get(i))) {
-
                 shadowBatch.render(instances.get(i));
-
                 modelBatch.render(instances.get(i), environment);
-
                 visibleCount++;
-
             }
 //            https://xoppa.github.io/blog/behind-the-3d-scenes-part2/
 
@@ -232,6 +227,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         }
 
         shadowBatch.end();
+
         shadowLight.end();
 
         modelBatch.end();
