@@ -116,8 +116,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
       //  cam.lookAt(0,0,0);
       //  cam.update();
 
-        cam.position.set(-1.1f, 14f, 0.0f);
-        cam.lookAt(-0.4f, 0, 0);
+        cam.position.set(-0.085f, 12f, 0.0f);
+        cam.lookAt(-0.1f, 0, 0);
         cam.near = 1f;
         cam.far = 300f;
         cam.update();
@@ -170,6 +170,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     public void render() {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+        cam.update();
 
         camController.update();
 
@@ -277,7 +279,13 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
 
-        if (selecting < 0) return false;
+        if (selecting <= 0) {
+
+            float x = Gdx.input.getDeltaX();
+            float y = Gdx.input.getDeltaY();
+
+            cam.translate(y/15.0f,0.0f,x/15.0f);
+        }
 
         if (selected == selecting) {
             cube_up[selected] = false;
