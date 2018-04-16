@@ -158,7 +158,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
                 axesMeshY.box(0.1f, 14.0f, 0.1f);
 
             Node node4 = tableBuilder.node();
-            node3.id = "axesY";
+            node4.id = "axesY";
                 MeshPartBuilder axesMeshZ;
                 axesMeshZ = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.GREEN)));
                 axesMeshZ.box(0.1f, 14.0f, 0.1f);
@@ -169,6 +169,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         instances.add(new GameObject(table, 0f, 0f, 0f));
 
         instances.get(0).transform.trn(0.0f, 0, 0.0f);
+
+        instances.get(1).transform.rotate(Vector3.X, 15);
 
         for (int i = -2; i < 1; i++) {
             for (int k = -2; k < 1; k++) {
