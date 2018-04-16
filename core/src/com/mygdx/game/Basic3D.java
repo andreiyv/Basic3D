@@ -116,8 +116,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
       //  cam.lookAt(0,0,0);
       //  cam.update();
 
-        cam.position.set(-0.085f, 12f, 0.0f);
-        cam.lookAt(-0.1f, 0, 0);
+        cam.position.set(12.0f, 0.0f, 0.0f);
+        cam.lookAt(-1.0f, 0, 0);
         cam.near = 1f;
         cam.far = 300f;
         cam.update();
@@ -135,21 +135,40 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         model = new Model();
 
         model = sceneBuilder.build();
-
+//
         ModelBuilder tableBuilder = new ModelBuilder();
 
         tableBuilder.begin();
-        Node node1 = tableBuilder.node();
-        node1.id = "table";
-        MeshPartBuilder tableMesh;
-        tableMesh = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
-        tableMesh.box(14.0f, 0.1f, 14.f);
+            Node node1 = tableBuilder.node();
+            node1.id = "table";
+                MeshPartBuilder tableMesh;
+                tableMesh = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
+                tableMesh.box(14.0f, 0.1f, 14.f);
+
+            Node node2 = tableBuilder.node();
+            node2.id = "axesX";
+                MeshPartBuilder axesMeshX;
+                axesMeshX = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
+                axesMeshX.box(0.1f, 14.0f, 0.1f);
+
+            Node node3 = tableBuilder.node();
+            node3.id = "axesY";
+                MeshPartBuilder axesMeshY;
+                axesMeshY = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
+                axesMeshY.box(0.1f, 14.0f, 0.1f);
+
+            Node node4 = tableBuilder.node();
+            node3.id = "axesY";
+                MeshPartBuilder axesMeshZ;
+                axesMeshZ = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.GREEN)));
+                axesMeshZ.box(0.1f, 14.0f, 0.1f);
+
 
         table = tableBuilder.end();
-
+//
         instances.add(new GameObject(table, 0f, 0f, 0f));
 
-        instances.get(0).transform.trn(-2.0f, 0, -1.5f);
+        instances.get(0).transform.trn(0.0f, 0, 0.0f);
 
         for (int i = -2; i < 1; i++) {
             for (int k = -2; k < 1; k++) {
