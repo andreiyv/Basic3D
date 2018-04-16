@@ -170,7 +170,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         instances.get(0).transform.trn(0.0f, 0, 0.0f);
 
-        instances.get(1).transform.rotate(Vector3.X, 15);
+        //instances.nodes.get(1).transform.rotate(Vector3.X, 15);
 
         for (int i = -2; i < 1; i++) {
             for (int k = -2; k < 1; k++) {
