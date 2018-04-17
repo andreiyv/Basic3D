@@ -116,8 +116,8 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
       //  cam.lookAt(0,0,0);
       //  cam.update();
 
-        cam.position.set(12.0f, 0.0f, 0.0f);
-        cam.lookAt(-1.0f, 0, 0);
+        cam.position.set(0.0f, 12.0f, 0.0f);
+        cam.lookAt(0.0f, 0, 0);
         cam.near = 1f;
         cam.far = 300f;
         cam.update();
@@ -170,7 +170,12 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         instances.get(0).transform.trn(0.0f, 0, 0.0f);
 
-        //instances.nodes.get(1).transform.rotate(Vector3.X, 15);
+      //  instances.get(0).nodes.get(1).translation.rotate(new Vector3(1,1,1), 45.0f);
+        instances.get(0).nodes.get(1).globalTransform.rotate(new Vector3(0,0,1), 90.0f);
+//        instances.get(0).nodes.get(2).globalTransform.rotate(new Vector3(1,1,1), 45.0f);
+        instances.get(0).nodes.get(3).globalTransform.rotate(new Vector3(1,0,0), 90.0f);
+        //instances.get(0).nodes.get(2).translation.rotate(new Vector3(0,1,1), 90.0f);
+        //instances.get(0).nodes.get(3).translation.rotate(new Vector3(1,0,0), 90.0f);
 
         for (int i = -2; i < 1; i++) {
             for (int k = -2; k < 1; k++) {
