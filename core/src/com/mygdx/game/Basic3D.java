@@ -149,19 +149,19 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             node2.id = "axesX";
                 MeshPartBuilder axesMeshX;
                 axesMeshX = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.RED)));
-                axesMeshX.box(0.1f, 14.0f, 0.1f);
+                axesMeshX.box(0.5f, 5.0f, 0.5f);
 
             Node node3 = tableBuilder.node();
             node3.id = "axesY";
                 MeshPartBuilder axesMeshY;
                 axesMeshY = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.BLUE)));
-                axesMeshY.box(0.1f, 14.0f, 0.1f);
+                axesMeshY.box(0.5f, 5.0f, 0.5f);
 
             Node node4 = tableBuilder.node();
             node4.id = "axesY";
                 MeshPartBuilder axesMeshZ;
                 axesMeshZ = tableBuilder.part("top", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates, new Material(ColorAttribute.createDiffuse(Color.GREEN)));
-                axesMeshZ.box(0.1f, 14.0f, 0.1f);
+                axesMeshZ.box(0.5f, 5.0f, 0.5f);
 
 
         table = tableBuilder.end();
@@ -170,15 +170,16 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
         instances.get(0).transform.trn(0.0f, 0, 0.0f);
 
-      //  instances.get(0).nodes.get(1).translation.rotate(new Vector3(1,1,1), 45.0f);
+// rotate axes
         instances.get(0).nodes.get(1).globalTransform.rotate(new Vector3(0,0,1), 90.0f);
-//        instances.get(0).nodes.get(2).globalTransform.rotate(new Vector3(1,1,1), 45.0f);
+        instances.get(0).nodes.get(1).globalTransform.trn(2.5f,0.0f,0.0f);
         instances.get(0).nodes.get(3).globalTransform.rotate(new Vector3(1,0,0), 90.0f);
-        //instances.get(0).nodes.get(2).translation.rotate(new Vector3(0,1,1), 90.0f);
-        //instances.get(0).nodes.get(3).translation.rotate(new Vector3(1,0,0), 90.0f);
+        instances.get(0).nodes.get(3).globalTransform.trn(0.0f,0.0f,2.5f);
 
-        for (int i = -2; i < 1; i++) {
-            for (int k = -2; k < 1; k++) {
+        instances.get(0).nodes.get(2).globalTransform.trn(0.0f,2.5f,0.0f);
+
+        for (int i = -1; i < 2; i++) {
+            for (int k = -1; k < 2; k++) {
                 instances.add(new GameObject(model, i * 3 + 0.1f, 0f, k * 3 + 0.1f));
             }
         }
@@ -310,7 +311,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
             float x = Gdx.input.getDeltaX();
             float y = Gdx.input.getDeltaY();
 
-            cam.translate(y/15.0f,0.0f,x/15.0f);
+            cam.translate(x/-90.0f,0.0f,y/-90.0f);
         }
 
         if (selected == selecting) {
