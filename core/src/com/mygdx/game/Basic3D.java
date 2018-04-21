@@ -75,6 +75,7 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
     protected boolean[] cube_up = {false, false, false, false, false, false, false, false, false, false};
     protected boolean[] cube_down = {false, false, false, false, false, false, false, false, false, false};
     protected boolean[] cube_rotate = {false, false, false, false, false, false, false, false, false, false};
+    protected int[] cube_n_rotate = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     protected int[] cube_iter = {0,0,0,0,0,0,0,0,0,0};
 
     public int MAX_UP = 9;
@@ -247,8 +248,12 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 /*
    Up Y, Right Z, X down
  */
-                    instances.get(i).transform.translate(0.0f, 1.0f, 0.0f).rotate(1,0,0, 15.0f).translate(0.0f, -1.0f, 0.0f);
-
+                    cube_n_rotate[i] = cube_n_rotate[i] + 1;
+instances.get(i).transform.translate(0.0f, 1.0f, 0.0f).rotate(1,0,0, 15.0f).translate(0.0f, -1.0f, 0.0f);
+                    if (cube_n_rotate[i] == 6 ) {
+                        cube_rotate[i] = false;
+                        cube_n_rotate[i] = 0;
+                    }
                 }
 
             }
@@ -305,11 +310,11 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-
+        float x = Gdx.input.getDeltaX();
+        float y = Gdx.input.getDeltaY();
         if (selecting <= 0) {
 
-            float x = Gdx.input.getDeltaX();
-            float y = Gdx.input.getDeltaY();
+
 
             cam.translate(x/-90.0f,0.0f,y/-90.0f);
         }
@@ -317,7 +322,9 @@ public class Basic3D extends InputAdapter implements ApplicationListener {
         if (selected == selecting) {
             cube_up[selected] = false;
             cube_down[selected] = false;
-            cube_rotate[selected] = true;
+            if (( x > 5.0f) || ( x < -5.0f ) || ( y > 5.0f) || (y < -5.0f)){
+                cube_rotate[selected] = true;
+            }
             Ray ray = cam.getPickRay(screenX, screenY);
             final float distance = -ray.origin.y / ray.direction.y;
             position.set(ray.direction).scl(distance).add(ray.origin);
